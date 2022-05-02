@@ -73,7 +73,7 @@ function App () {
           <img className="invisible md:visible w-0 h-0 md:w-80 md:h-52" src={busRed} alt="Bur Red" />
         </div>
 
-        <div className="mb-1">
+        <div className="flex mb-1">
 
           <div className="relative">
             <input
@@ -107,6 +107,14 @@ function App () {
                 </div>
             }
           </div>
+
+          <button
+            disabled={stop === ''}
+            className="bg-blue-500 pl-2 pr-2 ml-5 rounded text-white disabled:bg-gray-300 hover:bg-blue-700"
+            onClick={() => getStopById(stop)}
+          >
+            Actualizar
+          </button>
 
         </div>
 

@@ -68,12 +68,12 @@ function App () {
     <div className="flex justify-center w-screen h-screen">
 
       <div className='flex-col' >
-        <div className="flex md:justify-between">
-          <h1 className='text-6xl font-light text-gray-500 text-center mt-10'>Buscar Buses</h1>
+        <div className="flex md:justify-between justify-items-center mb-5 mt-5 md:mb-0 md:mt-0">
+          <h1 className='text-5xl font-light text-gray-500 md:mt-20'>Donde viene la micro</h1>
           <img className="invisible md:visible w-0 h-0 md:w-80 md:h-52" src={busRed} alt="Bur Red" />
         </div>
 
-        <div className="flex mb-1">
+        <div className="flex mb-5">
 
           <div className="relative">
             <input
@@ -81,15 +81,15 @@ function App () {
               tabIndex={1}
               id="input-search"
               ref={searchInputRef}
-              className="border-2 cursor-pointer w-52"
+              className="border-4 cursor-pointer w-52 ml-2 md:ml-0"
               type="text"
               placeholder="Buscar Parada"
               onChange={handleInputChange}
             />
             {
               showFilter &&
-                <div className="absolute z-50 bg-white top-7 h-96 overflow-auto">
-                  <ul className="border-4 w-52">
+                <div className="absolute z-50 bg-white top-7 h-72 overflow-auto ml-2 md:ml-0">
+                  <ul className="w-52 shadow-2xl border-4">
                     {
                       stopsFilter.map((stop, index) => (
                         <li tabIndex={0}
@@ -109,7 +109,7 @@ function App () {
           </div>
 
           <button
-            disabled={stop === ''}
+            disabled={stop === '' || searchInputRef.current.value === ''}
             className="bg-blue-500 pl-2 pr-2 ml-5 rounded text-white disabled:bg-gray-300 hover:bg-blue-700"
             onClick={() => getStopById(stop)}
           >
@@ -134,9 +134,9 @@ function App () {
               <table className="table-auto mb-10 w-screen max-w-4xl  text-center">
                 <thead>
                   <tr className="text-slate-600 border-b border-slate-500">
-                    <th className="p-5 w-20">Nº</th>
-                    <th className='p-5'>Dirección</th>
-                    <th className='p-5 w-48'>Viene en</th>
+                    <th className="p-3 w-20">Nº</th>
+                    <th className='p-3'>Dirección</th>
+                    <th className='p-3 w-48'>Viene en</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -144,12 +144,12 @@ function App () {
                     ? <tr><td colSpan={3} className="text-slate-500 text-center p-5">Cargando...</td></tr>
                     : service?.servicios?.item?.map(({ servicio, destino, respuestaServicio, horaprediccionbus1 }, index) => (
                         <tr key={`${servicio}-${index}`} className="text-slate-500 border-b border-slate-500 p-5">
-                          <td className="p-5 flex">
+                          <td className="p-3 flex">
                             <img className="w-5 h-5 mr-2" src={bus} alt="Bus" />
                             <span>{servicio}</span>
                           </td>
                           {respuestaServicio
-                            ? <td colSpan={3} className="bg-yellow-200 text-center p-5">{respuestaServicio}</td>
+                            ? <td colSpan={3} className="bg-yellow-200 text-center p-3">{respuestaServicio}</td>
                             : <>
                                 <td>{destino}</td>
                                 <td>{horaprediccionbus1}</td>

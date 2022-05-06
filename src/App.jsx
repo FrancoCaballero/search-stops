@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import './App.css'
 import { getAll, getById } from './services/stopsService'
 
 import bus from './assets/img/mini-bus.png'
@@ -24,6 +23,7 @@ function App () {
   const getStopById = useCallback(async (id) => {
     setLoading(true)
     const data = await getById(id)
+    data.servicios.item = data.servicios.item.sort((a, b) => a.distanciabus1 - b.distanciabus1)
     setService(data)
     setLoading(false)
   }, [])
@@ -56,8 +56,9 @@ function App () {
     setShowFilter(false)
   }
 
-  const handleInputChange = (e) => {
-    const { value } = e.target
+  const handleInputChange = () => {
+    const { value } = searchInputRef.current
+    searchInputRef.current.value = value.toUpperCase()
     const inputStopsFiltered = stops.filter((stop) => {
       return stop.toLowerCase().includes(value.toLowerCase())
     }).slice(0, 20)
@@ -75,17 +76,18 @@ function App () {
 
         <div className="flex mb-5">
 
-          <div className="relative">
-            <input
-              autoComplete="off"
-              tabIndex={1}
-              id="input-search"
-              ref={searchInputRef}
-              className="border-4 cursor-pointer w-52 ml-2 md:ml-0"
-              type="text"
-              placeholder="Buscar Parada"
-              onChange={handleInputChange}
-            />
+          <div className="relative flex">
+              <input
+                autoComplete="off"
+                tabIndex={1}
+                id="input-search"
+                ref={searchInputRef}
+                className="border-4 cursor-text w-52 ml-2 md:ml-0"
+                type="text"
+                placeholder="Buscar Parada"
+                onChange={handleInputChange}
+                onKeyDown={e => e.key === 'Enter' && handleStopChange(e.target.value)}
+              />
             {
               showFilter &&
                 <div className="absolute z-50 bg-white top-7 h-72 overflow-auto ml-2 md:ml-0">
@@ -108,13 +110,15 @@ function App () {
             }
           </div>
 
-          <button
-            disabled={stop === '' || searchInputRef.current.value === ''}
-            className="bg-blue-500 pl-2 pr-2 ml-5 rounded text-white disabled:bg-gray-300 hover:bg-blue-700"
-            onClick={() => getStopById(stop)}
-          >
-            Actualizar
-          </button>
+          <div className="flex flex-col justify-end">
+            <button
+              disabled={stop === '' || searchInputRef.current.value === ''}
+              className="bg-blue-500 p-1 ml-5 rounded text-white disabled:bg-gray-300 hover:bg-blue-700"
+              onClick={() => getStopById(stop)}
+            >
+              Actualizar
+            </button>
+          </div>
 
         </div>
 
@@ -143,19 +147,16 @@ function App () {
                   { loading
                     ? <tr><td colSpan={3} className="text-slate-500 text-center p-5">Cargando...</td></tr>
                     : service?.servicios?.item?.map(({ servicio, destino, respuestaServicio, horaprediccionbus1 }, index) => (
+                      !respuestaServicio && (
                         <tr key={`${servicio}-${index}`} className="text-slate-500 border-b border-slate-500 p-5">
                           <td className="p-3 flex">
                             <img className="w-5 h-5 mr-2" src={bus} alt="Bus" />
                             <span>{servicio}</span>
                           </td>
-                          {respuestaServicio
-                            ? <td colSpan={3} className="bg-yellow-200 text-center p-3">{respuestaServicio}</td>
-                            : <>
-                                <td>{destino}</td>
-                                <td>{horaprediccionbus1}</td>
-                              </>
-                          }
+                          <td>{destino}</td>
+                          <td>{horaprediccionbus1}</td>
                         </tr>
+                      )
                     ))
                   }
                 </tbody>

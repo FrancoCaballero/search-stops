@@ -91,7 +91,7 @@ function App () {
 
         <div className={`mr-2 ml-2 md:ml-0 md:mr-0 transform transition-all duration-200 ease-out ${lastSearchs.length > 0 ? 'scale-100' : 'scale-0'}`}>
           <h1 className="text-sm">Últimas Búsquedas</h1>
-          <div className="flex-col border-2 mb-2 p-2 h-20 overflow-auto overflow-y-hidden max-w-4xl">
+          <div className="flex-col border-2 mb-2 p-2 h-20 overflow-auto overflow-y-hidden max-w-xs md:max-w-4xl">
             <div className="flex">
               {
                 lastSearchs.length > 0 && lastSearchs.map((stop) => (

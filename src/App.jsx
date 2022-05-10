@@ -42,12 +42,12 @@ function App () {
   useEffect(() => {
     if (stop) {
       getStopById(stop)
-      let lastSearchsFiltered = [...lastSearchs, stop]
+      let lastSearchsFiltered = [stop, ...lastSearchs]
       lastSearchsFiltered = lastSearchsFiltered.filter(function (item, index, array) {
         return array.indexOf(item) === index
       })
       if (lastSearchsFiltered.length > 10) {
-        lastSearchsFiltered.shift()
+        lastSearchsFiltered.pop()
       }
       setLastSearchs(lastSearchsFiltered)
     }

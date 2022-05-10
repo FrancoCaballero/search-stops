@@ -11,6 +11,7 @@ function App () {
   const [stop, setStop] = useState('')
   const [loading, setLoading] = useState(false)
   const [showFilter, setShowFilter] = useState(false)
+  const [lastSearchs, setLastSearchs] = useState(JSON.parse(localStorage.getItem('lastSearchs')) || [])
 
   const searchInputRef = useRef(null)
 
@@ -29,12 +30,26 @@ function App () {
   }, [])
 
   useEffect(() => {
+    if (lastSearchs.length > 0) {
+      localStorage.setItem('lastSearchs', JSON.stringify(lastSearchs))
+    }
+  }, [lastSearchs])
+
+  useEffect(() => {
     getAllStops()
   }, [])
 
   useEffect(() => {
     if (stop) {
       getStopById(stop)
+      let lastSearchsFiltered = [...lastSearchs, stop]
+      lastSearchsFiltered = lastSearchsFiltered.filter(function (item, index, array) {
+        return array.indexOf(item) === index
+      })
+      if (lastSearchsFiltered.length > 10) {
+        lastSearchsFiltered.shift()
+      }
+      setLastSearchs(lastSearchsFiltered)
     }
   }, [stop])
 
@@ -72,6 +87,22 @@ function App () {
         <div className="flex md:justify-between justify-items-center mb-5 mt-5 md:mb-0 md:mt-0">
           <h1 className='text-5xl font-light text-gray-500 md:mt-20'>Donde viene la micro</h1>
           <img className="invisible md:visible w-0 h-0 md:w-80 md:h-52" src={busRed} alt="Bur Red" />
+        </div>
+
+        <div className={`mr-2 ml-2 md:ml-0 md:mr-0 transform transition-all duration-200 ease-out ${lastSearchs.length > 0 ? 'scale-100' : 'scale-0'}`}>
+          <h1 className="text-sm">Últimas Busquedas</h1>
+          <div className="flex-col border-2 mb-2 p-2 h-20 overflow-auto overflow-y-hidden max-w-4xl">
+            <div className="flex">
+              {
+                lastSearchs.length > 0 && lastSearchs.map((stop) => (
+                  <div key={stop} className="flex p-3 min-w-fit border-2 mr-2 rounded-lg cursor-pointer hover:bg-gray-200" onClick={() => handleStopChange(stop)}>
+                    <img className="w-5 h-5 mr-2" src={bus} alt="Bus" />
+                    <span>{stop}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
         </div>
 
         <div className="flex mb-5">
@@ -135,7 +166,7 @@ function App () {
               </a>
             </div>
 
-              <table className="table-auto mb-10 w-screen max-w-4xl  text-center">
+              <table className="table-auto mb-10 w-screen max-w-4xl text-center">
                 <thead>
                   <tr className="text-slate-600 border-b border-slate-500">
                     <th className="p-3 w-20">Nº</th>
